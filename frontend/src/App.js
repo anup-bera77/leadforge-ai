@@ -1263,7 +1263,7 @@ export default function App() {
     setStatus("running");
 
     try {
-      const res = await fetch(`${API_BASE}/tasks/run-agent`, {
+      const res = await fetch(`${API_BASE}/tasks/run-agent/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ description: task }),
