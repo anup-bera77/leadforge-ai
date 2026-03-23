@@ -2,7 +2,7 @@ LeadForge AI
 
 An autonomous, production-grade AI agent that plans, browses the web, and extracts high-quality lead data (emails, phones, LinkedIn profiles) in real-time. Built to replace manual prospecting and static, outdated databases.
 
-![LeadForge AI Dashboard](./demo.png) *(Note: Add a screenshot of your beautiful dark-mode UI here!)*
+![LeadForge AI Dashboard](./demo.png) 
 
 ## 🚀 The Vision
 Traditional lead generation requires either paying for expensive, outdated databases or spending hours manually scraping Google and LinkedIn. 
