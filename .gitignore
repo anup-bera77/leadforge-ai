@@ -1,0 +1,18 @@
+# Environments
+.env
+venv/
+env/
+
+# Python / Django
+__pycache__/
+*.py[cod]
+db.sqlite3
+media/
+
+# Node / React
+node_modules/
+build/
+.npm/
+
+# OS generated files
+.DS_Store
