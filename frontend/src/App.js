@@ -1169,7 +1169,7 @@ export default function App() {
   /* ── fetchActivity: unchanged endpoint ─────────────────────────────── */
   const fetchActivity = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/tasks/activity`);
+      const res = await fetch(`${API_BASE}/tasks/activity/`);
       if (!res.ok) return;
       const data = await res.json();
       setActivity(data);
