@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from agents.agent import GLOBAL_ACTIVITY_LOGS
 from rest_framework.decorators import api_view
 from .utils.query_classifier import classify_query
+from rest_framework import status
 
 
 @api_view(["POST"])
@@ -31,29 +32,33 @@ def create_task(request):
     })
 
 
-@csrf_exempt
+@api_view(['POST', 'GET'])
 def run_agent(request):
+    try:
+        if request.method == "POST":
 
-    if request.method == "POST":
+            body = json.loads(request.body)
+            description = body.get("description")
+            classification = classify_query(description)
+            agent = LeadScoutAgent()
+            result = agent.run(description)
 
-        body = json.loads(request.body)
-        description = body.get("description")
-        classification = classify_query(description)
-        agent = LeadScoutAgent()
-        result = agent.run(description)
+            from tasks.models import Task
+            task = Task.objects.latest("id")
 
-        from tasks.models import Task
-        task = Task.objects.latest("id")
-
-        return JsonResponse({
-            "status": "success",
-            "result": result,
-            "task_id": task.id,
-            "total_found": len(result),
-            "query_type": classification["type"], 
-            "query_reason": classification["reason"] , 
-        })
+            return Response({
+                "status": "success",
+                "result": result,
+                "task_id": task.id,
+                "total_found": len(result),
+                "query_type": classification.get("type", "REALISTIC"),
+                "query_reason": classification.get("reason", ""), 
+            }, status=status.HTTP_200_OK)
+        return Response({"message": "Use POST to run the agent"}, status=status.HTTP_200_OK)
     
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 @api_view(["GET"])
 def get_tasks(request):
     tasks = Task.objects.all().order_by('-id')[:20]
