@@ -35,41 +35,55 @@ def create_task(request):
 
 # @api_view(['POST', 'GET'])
 # 
-@csrf_exempt
+
 @api_view(['POST'])
-def run_agent(request,*args, **kwargs):
+def run_agent(request):
     try:
         description = request.data.get("description")
 
         if not description:
-            return Response({
-                "error": "Description is required"
-            }, status=400)
+            return Response({"error": "Description is required"}, status=400)
 
         print("🔥 INPUT:", description)
 
-        # ❌ Removed classify_query (for now)
+        agent = LeadScoutAgent()
 
-        print("🚀 Running agent...")
+        print("🚀 Running LeadScoutAgent...")
 
-        # TEMP TEST RESPONSE
-        result = [{"name": "Test Company"}]
+        # ✅ RUN YOUR REAL AGENT
+        result = agent.run(description)
 
-        print("✅ RESULT:", result)
+        print("✅ AGENT RESULT:", result)
+
+        # ✅ HANDLE CASE: agent returns None
+        if result is None:
+            return Response({
+                "status": "failed",
+                "result": [],
+                "message": "Agent failed or timed out"
+            })
+
+        # ✅ ENSURE SAFE RESPONSE FORMAT
+        if not isinstance(result, list):
+            print("⚠️ Unexpected result format:", result)
+            result = []
 
         return Response({
             "status": "success",
-            "result": result
+            "result": result,
+            "total_found": len(result)
         })
 
     except Exception as e:
-        import traceback
         print("❌ ERROR:", str(e))
         traceback.print_exc()
 
         return Response({
+            "status": "error",
+            "result": [],
             "error": str(e)
         }, status=500)
+
 @api_view(["GET"])
 def get_tasks(request):
     tasks = Task.objects.all().order_by('-id')[:20]
