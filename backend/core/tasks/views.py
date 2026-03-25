@@ -9,6 +9,7 @@ from agents.agent import GLOBAL_ACTIVITY_LOGS
 from rest_framework.decorators import api_view
 from .utils.query_classifier import classify_query
 from rest_framework import status
+import traceback
 
 
 @api_view(["POST"])
@@ -32,37 +33,44 @@ def create_task(request):
     })
 
 
-@api_view(['POST', 'GET'])
+# @api_view(['POST', 'GET'])
+# 
+
+@api_view(['POST'])
+@api_view(['POST'])
 def run_agent(request):
     try:
-        if request.method == "POST":
+        description = request.data.get("description")
 
-            description = request.data.get("description")
-            print("🔥 Received:", description)
-            classification = classify_query(description)
-            agent = LeadScoutAgent()
-            print("🚀 Running agent...")
-
-            result = agent.run(description)
-            print("✅ Result:", result)
-
-            
-            from tasks.models import Task
-            task = Task.objects.latest("id") if Task.objects.exists() else None
-
+        if not description:
             return Response({
-                "status": "success",
-                "result": result,
-                "task_id": task.id if task else None,
-                "total_found": len(result) if result else 0,
-                "query_type": classification.get("type", "REALISTIC"),
-                "query_reason": classification.get("reason", ""), 
-            }, status=status.HTTP_200_OK)
-        return Response({"message": "Use POST to run the agent"}, status=status.HTTP_200_OK)
-    
+                "error": "Description is required"
+            }, status=400)
+
+        print("🔥 INPUT:", description)
+
+        # ❌ Removed classify_query (for now)
+
+        print("🚀 Running agent...")
+
+        # TEMP TEST RESPONSE
+        result = [{"name": "Test Company"}]
+
+        print("✅ RESULT:", result)
+
+        return Response({
+            "status": "success",
+            "result": result
+        })
+
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+        import traceback
+        print("❌ ERROR:", str(e))
+        traceback.print_exc()
+
+        return Response({
+            "error": str(e)
+        }, status=500)
 @api_view(["GET"])
 def get_tasks(request):
     tasks = Task.objects.all().order_by('-id')[:20]
