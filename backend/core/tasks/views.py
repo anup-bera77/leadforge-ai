@@ -37,8 +37,7 @@ def run_agent(request):
     try:
         if request.method == "POST":
 
-            body = json.loads(request.body)
-            description = body.get("description")
+            description = request.data.get("description")
             classification = classify_query(description)
             agent = LeadScoutAgent()
             result = agent.run(description)
@@ -50,7 +49,7 @@ def run_agent(request):
                 "status": "success",
                 "result": result,
                 "task_id": task.id,
-                "total_found": len(result),
+                "total_found": len(result) if result else 0,
                 "query_type": classification.get("type", "REALISTIC"),
                 "query_reason": classification.get("reason", ""), 
             }, status=status.HTTP_200_OK)
