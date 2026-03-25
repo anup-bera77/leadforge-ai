@@ -5,7 +5,7 @@ from .views import get_tasks
 from .views import classify_query_view
 
 urlpatterns = [
-    path('tasks/run-agent/', run_agent),
+    path('run-agent/', run_agent),
     path('activity/', get_activity),
     path('', get_tasks),
     path("tasks/classify-query", classify_query_view),
