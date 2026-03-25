@@ -38,17 +38,22 @@ def run_agent(request):
         if request.method == "POST":
 
             description = request.data.get("description")
+            print("🔥 Received:", description)
             classification = classify_query(description)
             agent = LeadScoutAgent()
-            result = agent.run(description)
+            print("🚀 Running agent...")
 
+            result = agent.run(description)
+            print("✅ Result:", result)
+
+            
             from tasks.models import Task
-            task = Task.objects.latest("id")
+            task = Task.objects.latest("id") if Task.objects.exists() else None
 
             return Response({
                 "status": "success",
                 "result": result,
-                "task_id": task.id,
+                "task_id": task.id if task else None,
                 "total_found": len(result) if result else 0,
                 "query_type": classification.get("type", "REALISTIC"),
                 "query_reason": classification.get("reason", ""), 
