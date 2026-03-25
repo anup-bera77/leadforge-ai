@@ -37,7 +37,6 @@ def create_task(request):
 # 
 
 @api_view(['POST'])
-@api_view(['POST'])
 def run_agent(request):
     try:
         description = request.data.get("description")
