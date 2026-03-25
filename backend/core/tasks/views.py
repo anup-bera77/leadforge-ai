@@ -35,9 +35,9 @@ def create_task(request):
 
 # @api_view(['POST', 'GET'])
 # 
-
+@csrf_exempt
 @api_view(['POST'])
-def run_agent(request):
+def run_agent(request,*args, **kwargs):
     try:
         description = request.data.get("description")
 
